@@ -17,7 +17,7 @@ export default class App extends Component {
         ymin: 2,
         ymax: 4,
         pattern: "ab",
-        iterations: 1000,
+        iterations: 100,
       },
     };
 

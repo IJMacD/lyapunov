@@ -10189,7 +10189,7 @@ var App = function (_Component) {
         ymin: 2,
         ymax: 4,
         pattern: "ab",
-        iterations: 1000
+        iterations: 100
       }
     };
 
@@ -23106,6 +23106,10 @@ var Controls = function (_Component) {
           onChange = _props.onChange;
 
 
+      if (id !== "pattern") {
+        value = parseFloat(value);
+      }
+
       onChange(_extends({}, config, _defineProperty({}, id, value)));
     }
   }, {
@@ -23163,7 +23167,7 @@ var Controls = function (_Component) {
             { className: "col-sm-1 col-form-label" },
             "Iterations"
           ),
-          _react2.default.createElement("input", { type: "number", id: "iterations", value: config.iterations, onChange: this.handleChange, size: "4", placeholder: "Iterations", className: "form-control col-sm-1" })
+          _react2.default.createElement("input", { type: "number", id: "iterations", value: config.iterations, onChange: this.handleChange, size: "4", step: "100", placeholder: "Iterations", className: "form-control col-sm-1" })
         )
       );
     }

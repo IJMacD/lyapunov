@@ -8,8 +8,12 @@ export default class Controls extends Component {
   }
 
   handleChange (e) {
-    const { id, value } = e.target;
+    let { id, value } = e.target;
     const { config, onChange } = this.props;
+
+    if (id !== "pattern") {
+      value = parseFloat(value);
+    }
 
     onChange({
       ...config,
@@ -38,7 +42,7 @@ export default class Controls extends Component {
           <input type="number" id="ymin" value={config.ymin} onChange={this.handleChange} size="4" step="0.1" placeholder="YMin" className="form-control col-sm-1" />
           <input type="number" id="ymax" value={config.ymax} onChange={this.handleChange} size="4" step="0.1" placeholder="YMax" className="form-control col-sm-1" />
           <label className="col-sm-1 col-form-label">Iterations</label>
-          <input type="number" id="iterations" value={config.iterations} onChange={this.handleChange} size="4" placeholder="Iterations" className="form-control col-sm-1" />
+          <input type="number" id="iterations" value={config.iterations} onChange={this.handleChange} size="4" step="100" placeholder="Iterations" className="form-control col-sm-1" />
         </div>
       </form>
     );
