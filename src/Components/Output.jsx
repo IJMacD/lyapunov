@@ -12,12 +12,17 @@ export default class Output extends Component {
   }
 
   doImperitiveStuff () {
+    const { width } = this.props;
+    this.renderStrip(0, width);
+  }
+
+  renderStrip(startX, endX) {
     const { config, width, height } = this.props;
 
     if (this.canvas) {
       const ctx = this.canvas.getContext('2d');
 
-      for(let currX = 0; currX < width; currX++) {
+      for(let currX = startX; currX < endX; currX++) {
         for(let currY = 0; currY < height; currY++) {
 
           let a = ((config.ymax - config.ymin) / height) * (currY + InitX) + config.ymin;
@@ -98,7 +103,7 @@ export default class Output extends Component {
           }
 
           // STABILITY
-          else if (!isFinite(value) && value < 0)
+          else if (!isFinite(value))
           {
               //Debugger.Log(0, "", "-INF\n");
               pix = "rgb(255,255,255)";
@@ -140,10 +145,10 @@ export default class Output extends Component {
   }
 
   render() {
-    const { config, width, height } = this.props;
+    const { config, width, height, ...otherProps } = this.props;
 
     return (
-      <canvas width={width} height={height} ref={r => this.canvas = r} />
+      <canvas width={width} height={height} ref={r => this.canvas = r} {...otherProps} />
     );
   }
 }
