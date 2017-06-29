@@ -17,7 +17,7 @@ export default class Output extends Component {
   }
 
   renderStrip(startX, endX) {
-    const { config, width, height } = this.props;
+    const { config, theme, width, height } = this.props;
 
     if (this.canvas) {
       const ctx = this.canvas.getContext('2d');
@@ -84,22 +84,8 @@ export default class Output extends Component {
           {
               // CHAOS!!!
               //Debugger.Log(0, "", "CHAOS\n");
-              // switch (map)
-              // {
-              //     case Pallet.Yellow:
-                      let colorIntensity = Math.floor(Math.exp(-value) * 255);
-                      // if (colorIntensity > 0) allblue = false;
-                      pix = "rgb(0, 0, " + (255 - colorIntensity) + ")";
-                      // break;
-                  // case Pallet.Red:
-                  // case Pallet.Green:
-                  // case Pallet.Blue:
-                  //     pix = Color.FromArgb(255, 0, 0, 0);
-                  //     break;
-                  // default:
-                  //     pix = Color.White;
-                  //     break;
-              // }
+            let colorIntensity = 255 - Math.floor(Math.exp(-value) * 255);
+            pix = colorFromIntensity(colorIntensity, theme.chaos);
           }
 
           // STABILITY
@@ -116,26 +102,8 @@ export default class Output extends Component {
           else
           {
               //Debugger.Log(0, "", "OK\n");
-              // allblue = false;
               let colorIntensity = Math.floor(Math.exp(value) * 255);
-              // switch (map)
-              // {
-              //     case Pallet.Yellow:
-                      pix = "rgb(" + colorIntensity + ", " + Math.floor(colorIntensity * .85) + ", 0)";
-              //         break;
-              //     case Pallet.Red:
-              //         pix = Color.FromArgb(255, 255 - colorIntensity, 0, 0);
-              //         break;
-              //     case Pallet.Green:
-              //         pix = Color.FromArgb(255,0 , 255 - colorIntensity, 0);
-              //         break;
-              //     case Pallet.Blue:
-              //         pix = Color.FromArgb(255, 0, 0, 255 - colorIntensity);
-              //         break;
-              //     default:
-              //         pix = Color.White;
-              //         break;
-              // }
+              pix = colorFromIntensity(colorIntensity, theme.stable)
           }
           ctx.fillStyle = pix;
           ctx.fillRect(currX, height - currY - 1, 1, 1);
@@ -145,7 +113,7 @@ export default class Output extends Component {
   }
 
   render() {
-    const { config, width, height, ...otherProps } = this.props;
+    const { config, width, height, theme, ...otherProps } = this.props;
 
     return (
       <canvas width={width} height={height} ref={r => this.canvas = r} {...otherProps} />
@@ -161,4 +129,33 @@ function randomColor () {
     Math.floor(Math.random() * 256) +
     ")"
   );
+}
+
+function colorFromIntensity (intensity, color) {
+  switch (color)
+  {
+    case "yellow":
+      return `rgb(${intensity},${Math.floor(intensity * 0.85)},0)`;
+    case "red":
+      return `rgb(${intensity},0,0)`;
+    case "green":
+      return `rgb(0,${intensity},0)`;
+    case "blue":
+      return `rgb(0,0,${intensity})`;
+    case "lightblue":
+      return `rgb(0,${Math.floor(intensity * 0.75)},${intensity})`;
+    case "cyan":
+      return `rgb(0,${intensity},${intensity})`;
+    case "magenta":
+      return `rgb(${intensity},0,${Math.floor(intensity * 0.85)})`;
+    case "pink":
+      return `rgb(${intensity},${Math.floor(intensity * 0.5)},${Math.floor(intensity * 0.85)})`;
+    case "orange":
+      return `rgb(${intensity},${Math.floor(intensity * 0.4)},0)`;
+    case "black":
+      return `rgb(${255 - intensity},${255 - intensity},${255 - intensity})`;
+    case "white":
+    default:
+      return `rgb(${intensity},${intensity},${intensity})`;
+  }
 }

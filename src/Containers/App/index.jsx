@@ -31,6 +31,10 @@ export default class App extends Component {
 
   render () {
     const { config } = this.state;
+    const theme = {
+      stable: "yellow",
+      chaos: "blue"
+    };
 
     return (
       <div className="container">
@@ -38,7 +42,7 @@ export default class App extends Component {
           Lyapunov
         </h1>
         <Controls config={config} onChange={this.handleConfigChange} />
-        <ProgressiveOutput config={config} width={256} height={256} style={{width:256,height:256}} />
+        <ProgressiveOutput config={config} theme={theme} width={256} height={256} style={{width:256,height:256}} />
         <DebugOutput config={config} width={256} height={256} />
       </div>
     );

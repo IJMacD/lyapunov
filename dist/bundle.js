@@ -10211,6 +10211,10 @@ var App = function (_Component) {
     value: function render() {
       var config = this.state.config;
 
+      var theme = {
+        stable: "yellow",
+        chaos: "blue"
+      };
 
       return _react2.default.createElement(
         'div',
@@ -10221,7 +10225,7 @@ var App = function (_Component) {
           'Lyapunov'
         ),
         _react2.default.createElement(_Controls2.default, { config: config, onChange: this.handleConfigChange }),
-        _react2.default.createElement(_ProgressiveOutput2.default, { config: config, width: 256, height: 256, style: { width: 256, height: 256 } }),
+        _react2.default.createElement(_ProgressiveOutput2.default, { config: config, theme: theme, width: 256, height: 256, style: { width: 256, height: 256 } }),
         _react2.default.createElement(_DebugOutput2.default, { config: config, width: 256, height: 256 })
       );
     }
@@ -10488,7 +10492,7 @@ exports.default = Output;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -10512,176 +10516,174 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var InitX = 0.5;
 
 var Output = function (_Component) {
-    _inherits(Output, _Component);
+  _inherits(Output, _Component);
 
-    function Output() {
-        _classCallCheck(this, Output);
+  function Output() {
+    _classCallCheck(this, Output);
 
-        return _possibleConstructorReturn(this, (Output.__proto__ || Object.getPrototypeOf(Output)).apply(this, arguments));
+    return _possibleConstructorReturn(this, (Output.__proto__ || Object.getPrototypeOf(Output)).apply(this, arguments));
+  }
+
+  _createClass(Output, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.doImperitiveStuff();
     }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {
+      this.doImperitiveStuff();
+    }
+  }, {
+    key: 'doImperitiveStuff',
+    value: function doImperitiveStuff() {
+      var width = this.props.width;
 
-    _createClass(Output, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            this.doImperitiveStuff();
-        }
-    }, {
-        key: 'componentDidUpdate',
-        value: function componentDidUpdate() {
-            this.doImperitiveStuff();
-        }
-    }, {
-        key: 'doImperitiveStuff',
-        value: function doImperitiveStuff() {
-            var width = this.props.width;
-
-            this.renderStrip(0, width);
-        }
-    }, {
-        key: 'renderStrip',
-        value: function renderStrip(startX, endX) {
-            var _props = this.props,
-                config = _props.config,
-                width = _props.width,
-                height = _props.height;
+      this.renderStrip(0, width);
+    }
+  }, {
+    key: 'renderStrip',
+    value: function renderStrip(startX, endX) {
+      var _props = this.props,
+          config = _props.config,
+          theme = _props.theme,
+          width = _props.width,
+          height = _props.height;
 
 
-            if (this.canvas) {
-                var ctx = this.canvas.getContext('2d');
+      if (this.canvas) {
+        var ctx = this.canvas.getContext('2d');
 
-                for (var currX = startX; currX < endX; currX++) {
-                    for (var currY = 0; currY < height; currY++) {
+        for (var currX = startX; currX < endX; currX++) {
+          for (var currY = 0; currY < height; currY++) {
 
-                        var a = (config.ymax - config.ymin) / height * (currY + InitX) + config.ymin;
-                        var b = (config.xmax - config.xmin) / width * (currX + InitX) + config.xmin;
-                        var x = InitX;
-                        //Debugger.Log(0, "", "currY: " + currY.ToString() + " a: " + a.ToString() + " b: " + b.ToString() + "\n");
+            var a = (config.ymax - config.ymin) / height * (currY + InitX) + config.ymin;
+            var b = (config.xmax - config.xmin) / width * (currX + InitX) + config.xmin;
+            var x = InitX;
+            //Debugger.Log(0, "", "currY: " + currY.ToString() + " a: " + a.ToString() + " b: " + b.ToString() + "\n");
 
-                        var r = 0;
-                        for (var i = 0; i < config.pattern.length; i++) {
-                            //r = _config.Pattern[i] ? a : b;
-                            switch (config.pattern[i]) {
-                                case 'a':
-                                    r = a;
-                                    break;
-                                case 'b':
-                                    r = b;
-                                    break;
-                            }
-                            x *= r * (1 - x);
-                        }
-
-                        var sum_of_log_of_derived = 0;
-                        for (var n = 0; n < config.iterations; n++) {
-                            var derived = 1;
-                            for (var m = 0; m < config.pattern.length; m++) {
-                                //r = _config.Pattern[m] ? a : b;
-                                switch (config.pattern[m]) {
-                                    case 'a':
-                                        r = a;
-                                        break;
-                                    case 'b':
-                                        r = b;
-                                        break;
-                                }
-                                x *= r * (1 - x);
-                                derived *= r * (1 - 2 * x);
-                                //if (derived < 0) Debugger.Log(0, "", "< 0");
-                            }
-                            var log_of_derived = Math.log(Math.abs(derived));
-                            sum_of_log_of_derived += log_of_derived;
-
-                            if (!isFinite(derived)) break;
-                            //|| log_of_derived > 5.541263545158425) break;
-                            //if (n >= 50 && log_of_derived * n == sum_of_log_of_derived) break;
-                        }
-
-                        var value = sum_of_log_of_derived / (config.iterations + config.pattern.length);
-
-                        var pix = void 0;
-
-                        if (value > 0) {
-                            // CHAOS!!!
-                            //Debugger.Log(0, "", "CHAOS\n");
-                            // switch (map)
-                            // {
-                            //     case Pallet.Yellow:
-                            var colorIntensity = Math.floor(Math.exp(-value) * 255);
-                            // if (colorIntensity > 0) allblue = false;
-                            pix = "rgb(0, 0, " + (255 - colorIntensity) + ")";
-                            // break;
-                            // case Pallet.Red:
-                            // case Pallet.Green:
-                            // case Pallet.Blue:
-                            //     pix = Color.FromArgb(255, 0, 0, 0);
-                            //     break;
-                            // default:
-                            //     pix = Color.White;
-                            //     break;
-                            // }
-                        }
-
-                        // STABILITY
-                        else if (!isFinite(value)) {
-                                //Debugger.Log(0, "", "-INF\n");
-                                pix = "rgb(255,255,255)";
-                            } else if (isNaN(value)) {
-                                //Debugger.Log(0, "", "NaN\n");
-                                pix = "rgb(255,255,255)";
-                            } else {
-                                //Debugger.Log(0, "", "OK\n");
-                                // allblue = false;
-                                var _colorIntensity = Math.floor(Math.exp(value) * 255);
-                                // switch (map)
-                                // {
-                                //     case Pallet.Yellow:
-                                pix = "rgb(" + _colorIntensity + ", " + Math.floor(_colorIntensity * .85) + ", 0)";
-                                //         break;
-                                //     case Pallet.Red:
-                                //         pix = Color.FromArgb(255, 255 - colorIntensity, 0, 0);
-                                //         break;
-                                //     case Pallet.Green:
-                                //         pix = Color.FromArgb(255,0 , 255 - colorIntensity, 0);
-                                //         break;
-                                //     case Pallet.Blue:
-                                //         pix = Color.FromArgb(255, 0, 0, 255 - colorIntensity);
-                                //         break;
-                                //     default:
-                                //         pix = Color.White;
-                                //         break;
-                                // }
-                            }
-                        ctx.fillStyle = pix;
-                        ctx.fillRect(currX, height - currY - 1, 1, 1);
-                    }
-                }
+            var r = 0;
+            for (var i = 0; i < config.pattern.length; i++) {
+              //r = _config.Pattern[i] ? a : b;
+              switch (config.pattern[i]) {
+                case 'a':
+                  r = a;
+                  break;
+                case 'b':
+                  r = b;
+                  break;
+              }
+              x *= r * (1 - x);
             }
+
+            var sum_of_log_of_derived = 0;
+            for (var n = 0; n < config.iterations; n++) {
+              var derived = 1;
+              for (var m = 0; m < config.pattern.length; m++) {
+                //r = _config.Pattern[m] ? a : b;
+                switch (config.pattern[m]) {
+                  case 'a':
+                    r = a;
+                    break;
+                  case 'b':
+                    r = b;
+                    break;
+                }
+                x *= r * (1 - x);
+                derived *= r * (1 - 2 * x);
+                //if (derived < 0) Debugger.Log(0, "", "< 0");
+              }
+              var log_of_derived = Math.log(Math.abs(derived));
+              sum_of_log_of_derived += log_of_derived;
+
+              if (!isFinite(derived)) break;
+              //|| log_of_derived > 5.541263545158425) break;
+              //if (n >= 50 && log_of_derived * n == sum_of_log_of_derived) break;
+            }
+
+            var value = sum_of_log_of_derived / (config.iterations + config.pattern.length);
+
+            var pix = void 0;
+
+            if (value > 0) {
+              // CHAOS!!!
+              //Debugger.Log(0, "", "CHAOS\n");
+              var colorIntensity = 255 - Math.floor(Math.exp(-value) * 255);
+              pix = colorFromIntensity(colorIntensity, theme.chaos);
+            }
+
+            // STABILITY
+            else if (!isFinite(value)) {
+                //Debugger.Log(0, "", "-INF\n");
+                pix = "rgb(255,255,255)";
+              } else if (isNaN(value)) {
+                //Debugger.Log(0, "", "NaN\n");
+                pix = "rgb(255,255,255)";
+              } else {
+                //Debugger.Log(0, "", "OK\n");
+                var _colorIntensity = Math.floor(Math.exp(value) * 255);
+                pix = colorFromIntensity(_colorIntensity, theme.stable);
+              }
+            ctx.fillStyle = pix;
+            ctx.fillRect(currX, height - currY - 1, 1, 1);
+          }
         }
-    }, {
-        key: 'render',
-        value: function render() {
-            var _this2 = this;
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
 
-            var _props2 = this.props,
-                config = _props2.config,
-                width = _props2.width,
-                height = _props2.height,
-                otherProps = _objectWithoutProperties(_props2, ['config', 'width', 'height']);
+      var _props2 = this.props,
+          config = _props2.config,
+          width = _props2.width,
+          height = _props2.height,
+          theme = _props2.theme,
+          otherProps = _objectWithoutProperties(_props2, ['config', 'width', 'height', 'theme']);
 
-            return _react2.default.createElement('canvas', _extends({ width: width, height: height, ref: function ref(r) {
-                    return _this2.canvas = r;
-                } }, otherProps));
-        }
-    }]);
+      return _react2.default.createElement('canvas', _extends({ width: width, height: height, ref: function ref(r) {
+          return _this2.canvas = r;
+        } }, otherProps));
+    }
+  }]);
 
-    return Output;
+  return Output;
 }(_react.Component);
 
 exports.default = Output;
 
 
 function randomColor() {
-    return "rgb(" + Math.floor(Math.random() * 256) + ", " + Math.floor(Math.random() * 256) + ", " + Math.floor(Math.random() * 256) + ")";
+  return "rgb(" + Math.floor(Math.random() * 256) + ", " + Math.floor(Math.random() * 256) + ", " + Math.floor(Math.random() * 256) + ")";
+}
+
+function colorFromIntensity(intensity, color) {
+  switch (color) {
+    case "yellow":
+      return 'rgb(' + intensity + ',' + Math.floor(intensity * 0.85) + ',0)';
+    case "red":
+      return 'rgb(' + intensity + ',0,0)';
+    case "green":
+      return 'rgb(0,' + intensity + ',0)';
+    case "blue":
+      return 'rgb(0,0,' + intensity + ')';
+    case "lightblue":
+      return 'rgb(0,' + Math.floor(intensity * 0.75) + ',' + intensity + ')';
+    case "cyan":
+      return 'rgb(0,' + intensity + ',' + intensity + ')';
+    case "magenta":
+      return 'rgb(' + intensity + ',0,' + Math.floor(intensity * 0.85) + ')';
+    case "pink":
+      return 'rgb(' + intensity + ',' + Math.floor(intensity * 0.5) + ',' + Math.floor(intensity * 0.85) + ')';
+    case "orange":
+      return 'rgb(' + intensity + ',' + Math.floor(intensity * 0.4) + ',0)';
+    case "black":
+      return 'rgb(' + (255 - intensity) + ',' + (255 - intensity) + ',' + (255 - intensity) + ')';
+    case "white":
+    default:
+      return 'rgb(' + intensity + ',' + intensity + ',' + intensity + ')';
+  }
 }
 
 /***/ }),
