@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import Controls from '../../Components/Controls';
+import ThemeControls from '../../Components/ThemeControls';
 import Output from '../../Components/Output';
 import ProgressiveOutput from '../../Components/ProgressiveOutput';
 import DebugOutput from '../../Components/DebugOutput';
@@ -42,6 +43,7 @@ export default class App extends Component {
           Lyapunov
         </h1>
         <Controls config={config} onChange={this.handleConfigChange} />
+        <ThemeControls theme={theme} />
         <ProgressiveOutput config={config} theme={theme} width={256} height={256} style={{width:256,height:256}} />
         <DebugOutput config={config} width={256} height={256} />
       </div>
