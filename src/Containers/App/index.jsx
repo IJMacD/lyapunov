@@ -5,6 +5,7 @@ import SizeControls from '../../Components/SizeControls';
 import ThemeControls from '../../Components/ThemeControls';
 import Output from '../../Components/Output';
 import ProgressiveOutput from '../../Components/ProgressiveOutput';
+import Zoomer from '../../Components/Zoomer';
 import DebugOutput from '../../Components/DebugOutput';
 
 import classes from './style.cssm';
@@ -62,17 +63,19 @@ export default class App extends Component {
           <SizeControls size={size} onChange={this.handleSizeChange} className="col-sm-3" />
           <ThemeControls theme={theme} onChange={this.handleThemeChange} className="col-sm-3" />
         </div>
-        <ProgressiveOutput
-          config={config}
-          theme={theme}
-          width={size.width}
-          height={size.height}
-          style={{
-            width: size.width,
-            height: size.height,
-            maxWidth: "100%",
-          }}
-        />
+        <Zoomer>
+          <ProgressiveOutput
+            config={config}
+            theme={theme}
+            width={size.width}
+            height={size.height}
+            style={{
+              width: size.width,
+              height: size.height,
+              maxWidth: "100%",
+            }}
+          />
+        </Zoomer>
       </div>
     );
   }

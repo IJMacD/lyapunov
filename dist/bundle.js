@@ -10372,6 +10372,10 @@ var _ProgressiveOutput = __webpack_require__(90);
 
 var _ProgressiveOutput2 = _interopRequireDefault(_ProgressiveOutput);
 
+var _Zoomer = __webpack_require__(198);
+
+var _Zoomer2 = _interopRequireDefault(_Zoomer);
+
 var _DebugOutput = __webpack_require__(89);
 
 var _DebugOutput2 = _interopRequireDefault(_DebugOutput);
@@ -10460,17 +10464,21 @@ var App = function (_Component) {
           _react2.default.createElement(_SizeControls2.default, { size: size, onChange: this.handleSizeChange, className: 'col-sm-3' }),
           _react2.default.createElement(_ThemeControls2.default, { theme: theme, onChange: this.handleThemeChange, className: 'col-sm-3' })
         ),
-        _react2.default.createElement(_ProgressiveOutput2.default, {
-          config: config,
-          theme: theme,
-          width: size.width,
-          height: size.height,
-          style: {
+        _react2.default.createElement(
+          _Zoomer2.default,
+          null,
+          _react2.default.createElement(_ProgressiveOutput2.default, {
+            config: config,
+            theme: theme,
             width: size.width,
             height: size.height,
-            maxWidth: "100%"
-          }
-        })
+            style: {
+              width: size.width,
+              height: size.height,
+              maxWidth: "100%"
+            }
+          })
+        )
       );
     }
   }]);
@@ -23819,6 +23827,139 @@ var SizeControls = function (_Component) {
 }(_react.Component);
 
 exports.default = SizeControls;
+
+/***/ }),
+/* 198 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(14);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Zoomer = function (_Component) {
+  _inherits(Zoomer, _Component);
+
+  function Zoomer() {
+    _classCallCheck(this, Zoomer);
+
+    var _this = _possibleConstructorReturn(this, (Zoomer.__proto__ || Object.getPrototypeOf(Zoomer)).call(this));
+
+    _this.state = {
+      selection: null
+    };
+
+    _this.handleMouseDown = _this.handleMouseDown.bind(_this);
+    _this.handleMouseMove = _this.handleMouseMove.bind(_this);
+    _this.handleMouseUp = _this.handleMouseUp.bind(_this);
+    return _this;
+  }
+
+  _createClass(Zoomer, [{
+    key: "handleMouseDown",
+    value: function handleMouseDown(e) {
+      this.setState({
+        selection: {
+          x: e.nativeEvent.offsetX,
+          y: e.nativeEvent.offsetY,
+          w: 0,
+          h: 0
+        }
+      });
+    }
+  }, {
+    key: "handleMouseMove",
+    value: function handleMouseMove(e) {
+      var selection = this.state.selection;
+
+
+      if (selection) {
+        var pageX = e.pageX;
+        var pageY = e.pageY;
+        var targetBounds = e.currentTarget.getBoundingClientRect();
+        var offsetX = pageX - targetBounds.left;
+        var offsetY = pageY - targetBounds.top;
+
+        var x = Math.min(selection.x, offsetX);
+        var y = Math.min(selection.y, offsetY);
+        var x2 = Math.max(selection.x, offsetX);
+        var y2 = Math.max(selection.y, offsetY);
+
+        this.setState({
+          selection: {
+            x: x,
+            y: y,
+            w: x2 - x,
+            h: y2 - y
+          }
+        });
+      }
+    }
+  }, {
+    key: "handleMouseUp",
+    value: function handleMouseUp(e) {
+      this.setState({ selection: null });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _props = this.props,
+          onChange = _props.onChange,
+          style = _props.style,
+          children = _props.children,
+          otherProps = _objectWithoutProperties(_props, ["onChange", "style", "children"]);
+
+      var selection = this.state.selection;
+
+
+      var innerStyle = {
+        border: "2px dashed rgba(0,0,0,0.6)",
+        display: selection ? "" : "none",
+        position: "absolute",
+        left: selection && selection.x,
+        top: selection && selection.y,
+        width: selection && selection.w,
+        height: selection && selection.h
+      };
+
+      return _react2.default.createElement(
+        "div",
+        _extends({
+          style: _extends({}, style, { position: "relative" }),
+          onMouseDown: this.handleMouseDown,
+          onMouseMove: this.handleMouseMove,
+          onMouseUp: this.handleMouseUp
+        }, otherProps),
+        children,
+        _react2.default.createElement("div", { style: innerStyle })
+      );
+    }
+  }]);
+
+  return Zoomer;
+}(_react.Component);
+
+exports.default = Zoomer;
 
 /***/ })
 /******/ ]);
