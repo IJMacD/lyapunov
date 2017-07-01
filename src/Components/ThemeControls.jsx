@@ -1,4 +1,4 @@
-import React, {Component } from 'react';
+import React, { Component } from 'react';
 
 export default class ThemeControls extends Component {
   constructor () {
@@ -35,19 +35,17 @@ function ColorPicker (props) {
   const pickerName = "colorpicker_" + props.title;
 
   return (
-    <form className="form-inline">
-      <fieldset className="form-group">
-        <label>{ props.title }</label>
-        <select className="form-control" name={pickerName} value={props.color} onChange={e => props.onChange(e.target.value)}>
-        {
-          colors.map(color => {
-            const key = color.toLowerCase().replace(/\s+/g, "");
+    <div className="row">
+      <label className="col-sm-6">{ props.title }</label>
+      <select className="form-control col-sm-6" name={pickerName} value={props.color} onChange={e => props.onChange(e.target.value)}>
+      {
+        colors.map(color => {
+          const key = color.toLowerCase().replace(/\s+/g, "");
 
-            return <option key={key} value={key}>{ color }</option>;
-          })
-        }
-        </select>
-      </fieldset>
-    </form>
+          return <option key={key} value={key}>{ color }</option>;
+        })
+      }
+      </select>
+    </div>
   );
 }

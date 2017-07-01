@@ -10356,6 +10356,10 @@ var _Controls = __webpack_require__(88);
 
 var _Controls2 = _interopRequireDefault(_Controls);
 
+var _SizeControls = __webpack_require__(197);
+
+var _SizeControls2 = _interopRequireDefault(_SizeControls);
+
 var _ThemeControls = __webpack_require__(91);
 
 var _ThemeControls2 = _interopRequireDefault(_ThemeControls);
@@ -10404,10 +10408,15 @@ var App = function (_Component) {
       theme: {
         stable: "yellow",
         chaos: "blue"
+      },
+      size: {
+        width: 256,
+        height: 256
       }
     };
 
     _this.handleConfigChange = _this.handleConfigChange.bind(_this);
+    _this.handleSizeChange = _this.handleSizeChange.bind(_this);
     _this.handleThemeChange = _this.handleThemeChange.bind(_this);
     return _this;
   }
@@ -10423,11 +10432,17 @@ var App = function (_Component) {
       this.setState({ theme: theme });
     }
   }, {
+    key: 'handleSizeChange',
+    value: function handleSizeChange(size) {
+      this.setState({ size: size });
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _state = this.state,
           config = _state.config,
-          theme = _state.theme;
+          theme = _state.theme,
+          size = _state.size;
 
 
       return _react2.default.createElement(
@@ -10442,10 +10457,20 @@ var App = function (_Component) {
           'div',
           { className: 'row' },
           _react2.default.createElement(_Controls2.default, { config: config, onChange: this.handleConfigChange, className: 'col-sm-6' }),
-          _react2.default.createElement(_ThemeControls2.default, { theme: theme, onChange: this.handleThemeChange, className: 'col-sm-6' })
+          _react2.default.createElement(_SizeControls2.default, { size: size, onChange: this.handleSizeChange, className: 'col-sm-3' }),
+          _react2.default.createElement(_ThemeControls2.default, { theme: theme, onChange: this.handleThemeChange, className: 'col-sm-3' })
         ),
-        _react2.default.createElement(_ProgressiveOutput2.default, { config: config, theme: theme, width: 256, height: 256, style: { width: 256, height: 256 } }),
-        _react2.default.createElement(_DebugOutput2.default, { config: config, width: 256, height: 256 })
+        _react2.default.createElement(_ProgressiveOutput2.default, {
+          config: config,
+          theme: theme,
+          width: size.width,
+          height: size.height,
+          style: {
+            width: size.width,
+            height: size.height,
+            maxWidth: "100%"
+          }
+        })
       );
     }
   }]);
@@ -10883,31 +10908,27 @@ function ColorPicker(props) {
   var pickerName = "colorpicker_" + props.title;
 
   return _react2.default.createElement(
-    "form",
-    { className: "form-inline" },
+    "div",
+    { className: "row" },
     _react2.default.createElement(
-      "fieldset",
-      { className: "form-group" },
-      _react2.default.createElement(
-        "label",
-        null,
-        props.title
-      ),
-      _react2.default.createElement(
-        "select",
-        { className: "form-control", name: pickerName, value: props.color, onChange: function onChange(e) {
-            return props.onChange(e.target.value);
-          } },
-        colors.map(function (color) {
-          var key = color.toLowerCase().replace(/\s+/g, "");
+      "label",
+      { className: "col-sm-6" },
+      props.title
+    ),
+    _react2.default.createElement(
+      "select",
+      { className: "form-control col-sm-6", name: pickerName, value: props.color, onChange: function onChange(e) {
+          return props.onChange(e.target.value);
+        } },
+      colors.map(function (color) {
+        var key = color.toLowerCase().replace(/\s+/g, "");
 
-          return _react2.default.createElement(
-            "option",
-            { key: key, value: key },
-            color
-          );
-        })
-      )
+        return _react2.default.createElement(
+          "option",
+          { key: key, value: key },
+          color
+        );
+      })
     )
   );
 }
@@ -23701,6 +23722,103 @@ if(false) {
 	// When the module is disposed, remove the <style> tags
 	module.hot.dispose(function() { update(); });
 }
+
+/***/ }),
+/* 197 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(14);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var SizeControls = function (_Component) {
+  _inherits(SizeControls, _Component);
+
+  function SizeControls() {
+    _classCallCheck(this, SizeControls);
+
+    var _this = _possibleConstructorReturn(this, (SizeControls.__proto__ || Object.getPrototypeOf(SizeControls)).call(this));
+
+    _this.handleChange = _this.handleChange.bind(_this);
+    return _this;
+  }
+
+  _createClass(SizeControls, [{
+    key: "handleChange",
+    value: function handleChange(key) {
+      var _this2 = this;
+
+      return function (e) {
+        var _props = _this2.props,
+            size = _props.size,
+            onChange = _props.onChange;
+
+
+        onChange(_extends({}, size, _defineProperty({}, key, parseInt(e.target.value))));
+      };
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _props2 = this.props,
+          size = _props2.size,
+          onChange = _props2.onChange,
+          otherProps = _objectWithoutProperties(_props2, ["size", "onChange"]);
+
+      return _react2.default.createElement(
+        "div",
+        otherProps,
+        _react2.default.createElement(
+          "div",
+          { className: "row" },
+          _react2.default.createElement(
+            "label",
+            { className: "col-sm-6 col-form-label" },
+            "Width"
+          ),
+          _react2.default.createElement("input", { type: "number", id: "width", value: size.width, onChange: this.handleChange("width"), size: "4", placeholder: "Width", className: "form-control col-sm-6" })
+        ),
+        _react2.default.createElement(
+          "div",
+          { className: "row" },
+          _react2.default.createElement(
+            "label",
+            { className: "col-sm-6 col-form-label" },
+            "Height"
+          ),
+          _react2.default.createElement("input", { type: "number", id: "height", value: size.height, onChange: this.handleChange("height"), size: "4", placeholder: "Height", className: "form-control col-sm-6" })
+        )
+      );
+    }
+  }]);
+
+  return SizeControls;
+}(_react.Component);
+
+exports.default = SizeControls;
 
 /***/ })
 /******/ ]);

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import Controls from '../../Components/Controls';
+import SizeControls from '../../Components/SizeControls';
 import ThemeControls from '../../Components/ThemeControls';
 import Output from '../../Components/Output';
 import ProgressiveOutput from '../../Components/ProgressiveOutput';
@@ -25,9 +26,14 @@ export default class App extends Component {
         stable: "yellow",
         chaos: "blue"
       },
+      size: {
+        width: 256,
+        height: 256,
+      },
     };
 
     this.handleConfigChange = this.handleConfigChange.bind(this);
+    this.handleSizeChange = this.handleSizeChange.bind(this);
     this.handleThemeChange = this.handleThemeChange.bind(this);
   }
 
@@ -39,8 +45,12 @@ export default class App extends Component {
     this.setState({ theme });
   }
 
+  handleSizeChange (size) {
+    this.setState({ size });
+  }
+
   render () {
-    const { config, theme } = this.state;
+    const { config, theme, size } = this.state;
 
     return (
       <div className="container">
@@ -49,16 +59,18 @@ export default class App extends Component {
         </h1>
         <div className="row">
           <Controls config={config} onChange={this.handleConfigChange} className="col-sm-6" />
-          <ThemeControls theme={theme} onChange={this.handleThemeChange} className="col-sm-6" />
+          <SizeControls size={size} onChange={this.handleSizeChange} className="col-sm-3" />
+          <ThemeControls theme={theme} onChange={this.handleThemeChange} className="col-sm-3" />
         </div>
         <ProgressiveOutput
           config={config}
           theme={theme}
-          width={256}
-          height={256}
+          width={size.width}
+          height={size.height}
           style={{
-            width: 256,
-            height: 256,
+            width: size.width,
+            height: size.height,
+            maxWidth: "100%",
           }}
         />
       </div>
