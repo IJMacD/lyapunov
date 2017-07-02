@@ -36,6 +36,7 @@ export default class App extends Component {
     this.handleConfigChange = this.handleConfigChange.bind(this);
     this.handleSizeChange = this.handleSizeChange.bind(this);
     this.handleThemeChange = this.handleThemeChange.bind(this);
+    this.handleZoom = this.handleZoom.bind(this);
   }
 
   handleConfigChange (config) {
@@ -48,6 +49,26 @@ export default class App extends Component {
 
   handleSizeChange (size) {
     this.setState({ size });
+  }
+
+  handleZoom (selection) {
+    const { x, y, w, h } = selection;
+    const { size, config } = this.state;
+    const { width, height } = size;
+    const { xmin, xmax, ymin, ymax } = config;
+
+    const xRange = xmax - xmin;
+    const yRange = ymax - ymin;
+
+    this.setState({
+      config: {
+        ...config,
+        xmin: xmin + (x / width) * xRange,
+        ymin: ymin + (1 - (y + h) / height) * yRange,
+        xmax: xmin + ((x + w) / width) * xRange,
+        ymax: ymin + (1- y / height) * yRange,
+      }
+    })
   }
 
   render () {
@@ -63,7 +84,7 @@ export default class App extends Component {
           <SizeControls size={size} onChange={this.handleSizeChange} className="col-sm-3" />
           <ThemeControls theme={theme} onChange={this.handleThemeChange} className="col-sm-3" />
         </div>
-        <Zoomer>
+        <Zoomer onZoom={this.handleZoom}>
           <ProgressiveOutput
             config={config}
             theme={theme}

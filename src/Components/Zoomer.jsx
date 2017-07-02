@@ -45,11 +45,24 @@ export default class Zoomer extends Component {
   }
 
   handleMouseUp (e) {
+    const { onZoom } = this.props;
+    const { selection } = this.state;
+
+    const x = selection && Math.min(selection.x1, selection.x2);
+    const y = selection && Math.min(selection.y1, selection.y2);
+    const x2 = selection && Math.max(selection.x1, selection.x2);
+    const y2 = selection && Math.max(selection.y1, selection.y2);
+    onZoom({
+      x,
+      y,
+      w: x2 - x,
+      h: y2 - y,
+    });
     this.setState({ selection: null });
   }
 
   render() {
-    const { onChange, style, children, ...otherProps } = this.props;
+    const { onChange, style, children, onZoom, ...otherProps } = this.props;
     const { selection } = this.state;
 
     const x1 = selection && Math.min(selection.x1, selection.x2);

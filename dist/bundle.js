@@ -10346,6 +10346,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = __webpack_require__(14);
@@ -10422,6 +10424,7 @@ var App = function (_Component) {
     _this.handleConfigChange = _this.handleConfigChange.bind(_this);
     _this.handleSizeChange = _this.handleSizeChange.bind(_this);
     _this.handleThemeChange = _this.handleThemeChange.bind(_this);
+    _this.handleZoom = _this.handleZoom.bind(_this);
     return _this;
   }
 
@@ -10441,12 +10444,42 @@ var App = function (_Component) {
       this.setState({ size: size });
     }
   }, {
+    key: 'handleZoom',
+    value: function handleZoom(selection) {
+      var x = selection.x,
+          y = selection.y,
+          w = selection.w,
+          h = selection.h;
+      var _state = this.state,
+          size = _state.size,
+          config = _state.config;
+      var width = size.width,
+          height = size.height;
+      var xmin = config.xmin,
+          xmax = config.xmax,
+          ymin = config.ymin,
+          ymax = config.ymax;
+
+
+      var xRange = xmax - xmin;
+      var yRange = ymax - ymin;
+
+      this.setState({
+        config: _extends({}, config, {
+          xmin: xmin + x / width * xRange,
+          ymin: ymin + (1 - (y + h) / height) * yRange,
+          xmax: xmin + (x + w) / width * xRange,
+          ymax: ymin + (1 - y / height) * yRange
+        })
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
-      var _state = this.state,
-          config = _state.config,
-          theme = _state.theme,
-          size = _state.size;
+      var _state2 = this.state,
+          config = _state2.config,
+          theme = _state2.theme,
+          size = _state2.size;
 
 
       return _react2.default.createElement(
@@ -10466,7 +10499,7 @@ var App = function (_Component) {
         ),
         _react2.default.createElement(
           _Zoomer2.default,
-          null,
+          { onZoom: this.handleZoom },
           _react2.default.createElement(_ProgressiveOutput2.default, {
             config: config,
             theme: theme,
@@ -23911,6 +23944,20 @@ var Zoomer = function (_Component) {
   }, {
     key: "handleMouseUp",
     value: function handleMouseUp(e) {
+      var onZoom = this.props.onZoom;
+      var selection = this.state.selection;
+
+
+      var x = selection && Math.min(selection.x1, selection.x2);
+      var y = selection && Math.min(selection.y1, selection.y2);
+      var x2 = selection && Math.max(selection.x1, selection.x2);
+      var y2 = selection && Math.max(selection.y1, selection.y2);
+      onZoom({
+        x: x,
+        y: y,
+        w: x2 - x,
+        h: y2 - y
+      });
       this.setState({ selection: null });
     }
   }, {
@@ -23920,7 +23967,8 @@ var Zoomer = function (_Component) {
           onChange = _props.onChange,
           style = _props.style,
           children = _props.children,
-          otherProps = _objectWithoutProperties(_props, ["onChange", "style", "children"]);
+          onZoom = _props.onZoom,
+          otherProps = _objectWithoutProperties(_props, ["onChange", "style", "children", "onZoom"]);
 
       var selection = this.state.selection;
 
