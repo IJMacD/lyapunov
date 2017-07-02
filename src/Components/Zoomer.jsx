@@ -16,10 +16,10 @@ export default class Zoomer extends Component {
   handleMouseDown (e) {
     this.setState({
       selection: {
-        x: e.nativeEvent.offsetX,
-        y: e.nativeEvent.offsetY,
-        w: 0,
-        h: 0,
+        x1: e.nativeEvent.offsetX,
+        y1: e.nativeEvent.offsetY,
+        x2: e.nativeEvent.offsetX,
+        y2: e.nativeEvent.offsetY,
       }
     });
   }
@@ -34,17 +34,11 @@ export default class Zoomer extends Component {
       const offsetX = pageX - targetBounds.left;
       const offsetY = pageY - targetBounds.top;
 
-      const x = Math.min(selection.x, offsetX);
-      const y = Math.min(selection.y, offsetY);
-      const x2 = Math.max(selection.x, offsetX);
-      const y2 = Math.max(selection.y, offsetY);
-
       this.setState({
         selection: {
-          x,
-          y,
-          w: x2 - x,
-          h: y2 - y,
+          ...selection,
+          x2: offsetX,
+          y2: offsetY,
         }
       });
     }
@@ -58,19 +52,24 @@ export default class Zoomer extends Component {
     const { onChange, style, children, ...otherProps } = this.props;
     const { selection } = this.state;
 
+    const x1 = selection && Math.min(selection.x1, selection.x2);
+    const y1 = selection && Math.min(selection.y1, selection.y2);
+    const x2 = selection && Math.max(selection.x1, selection.x2);
+    const y2 = selection && Math.max(selection.y1, selection.y2);
+
     const innerStyle = {
       border: "2px dashed rgba(0,0,0,0.6)",
       display: selection ? "" : "none",
       position: "absolute",
-      left: selection && selection.x,
-      top: selection && selection.y,
-      width: selection && selection.w,
-      height: selection && selection.h,
+      left: x1,
+      top: y1,
+      width: (x2 - x1),
+      height: (y2 - y1),
     };
 
     return (
       <div
-        style={{...style, position: "relative"}}
+        style={{...style, position: "relative", display: "inline-block"}}
         onMouseDown={this.handleMouseDown}
         onMouseMove={this.handleMouseMove}
         onMouseUp={this.handleMouseUp}

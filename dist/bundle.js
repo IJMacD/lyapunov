@@ -23880,10 +23880,10 @@ var Zoomer = function (_Component) {
     value: function handleMouseDown(e) {
       this.setState({
         selection: {
-          x: e.nativeEvent.offsetX,
-          y: e.nativeEvent.offsetY,
-          w: 0,
-          h: 0
+          x1: e.nativeEvent.offsetX,
+          y1: e.nativeEvent.offsetY,
+          x2: e.nativeEvent.offsetX,
+          y2: e.nativeEvent.offsetY
         }
       });
     }
@@ -23900,18 +23900,11 @@ var Zoomer = function (_Component) {
         var offsetX = pageX - targetBounds.left;
         var offsetY = pageY - targetBounds.top;
 
-        var x = Math.min(selection.x, offsetX);
-        var y = Math.min(selection.y, offsetY);
-        var x2 = Math.max(selection.x, offsetX);
-        var y2 = Math.max(selection.y, offsetY);
-
         this.setState({
-          selection: {
-            x: x,
-            y: y,
-            w: x2 - x,
-            h: y2 - y
-          }
+          selection: _extends({}, selection, {
+            x2: offsetX,
+            y2: offsetY
+          })
         });
       }
     }
@@ -23932,20 +23925,25 @@ var Zoomer = function (_Component) {
       var selection = this.state.selection;
 
 
+      var x1 = selection && Math.min(selection.x1, selection.x2);
+      var y1 = selection && Math.min(selection.y1, selection.y2);
+      var x2 = selection && Math.max(selection.x1, selection.x2);
+      var y2 = selection && Math.max(selection.y1, selection.y2);
+
       var innerStyle = {
         border: "2px dashed rgba(0,0,0,0.6)",
         display: selection ? "" : "none",
         position: "absolute",
-        left: selection && selection.x,
-        top: selection && selection.y,
-        width: selection && selection.w,
-        height: selection && selection.h
+        left: x1,
+        top: y1,
+        width: x2 - x1,
+        height: y2 - y1
       };
 
       return _react2.default.createElement(
         "div",
         _extends({
-          style: _extends({}, style, { position: "relative" }),
+          style: _extends({}, style, { position: "relative", display: "inline-block" }),
           onMouseDown: this.handleMouseDown,
           onMouseMove: this.handleMouseMove,
           onMouseUp: this.handleMouseUp
