@@ -52,12 +52,15 @@ export default class Zoomer extends Component {
     const y = selection && Math.min(selection.y1, selection.y2);
     const x2 = selection && Math.max(selection.x1, selection.x2);
     const y2 = selection && Math.max(selection.y1, selection.y2);
-    onZoom({
-      x,
-      y,
-      w: x2 - x,
-      h: y2 - y,
-    });
+
+    if(x !== x2 && y !== y2) {
+      onZoom({
+        x,
+        y,
+        w: x2 - x,
+        h: y2 - y,
+      });
+    }
     this.setState({ selection: null });
   }
 

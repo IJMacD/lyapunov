@@ -11162,12 +11162,15 @@ var Zoomer = function (_Component) {
       var y = selection && Math.min(selection.y1, selection.y2);
       var x2 = selection && Math.max(selection.x1, selection.x2);
       var y2 = selection && Math.max(selection.y1, selection.y2);
-      onZoom({
-        x: x,
-        y: y,
-        w: x2 - x,
-        h: y2 - y
-      });
+
+      if (x !== x2 && y !== y2) {
+        onZoom({
+          x: x,
+          y: y,
+          w: x2 - x,
+          h: y2 - y
+        });
+      }
       this.setState({ selection: null });
     }
   }, {
