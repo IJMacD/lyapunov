@@ -5,6 +5,7 @@ import SizeControls from '../../Components/SizeControls';
 import ThemeControls from '../../Components/ThemeControls';
 import Output from '../../Components/Output';
 import ProgressiveOutput from '../../Components/ProgressiveOutput';
+import WorkerOutput from '../../Components/WorkerOutput';
 import Zoomer from '../../Components/Zoomer';
 import DebugOutput from '../../Components/DebugOutput';
 
@@ -85,7 +86,7 @@ export default class App extends Component {
           <ThemeControls theme={theme} onChange={this.handleThemeChange} className="col-sm-3" />
         </div>
         <Zoomer onZoom={this.handleZoom}>
-          <ProgressiveOutput
+          <WorkerOutput
             config={config}
             theme={theme}
             width={size.width}

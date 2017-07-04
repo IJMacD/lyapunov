@@ -6,22 +6,29 @@ const StripWidth = 32;
 
 export default class WorkerOutput extends ProgressiveOutput {
 
+  constructor () {
+    super();
+
+    this.jobID = 0;
+  }
+
   componentDidMount() {
     this.worker = new Worker('./worker.js');
     this.worker.addEventListener("message", e => {
-      const { startX, endX, data } = e.data;
+      const { width, height } = this.props;
+      const { startX, data, jobID } = e.data;
+      const array = new Float32Array(data);
+      const endX = startX + array.length / height;
 
-      this.renderStrip(startX, endX, e.data);
+      if (jobID === this.jobID) {
+        this.renderStrip(startX, endX, array);
 
-      if (endX < width) {
-        this.setState({ startX: endX });
+        if (endX < width) {
+          this.setState({ startX: endX });
+        }
       }
     });
 
-    this.doImperitiveStuff();
-  }
-
-  componentDidUpdate() {
     this.doImperitiveStuff();
   }
 
@@ -30,11 +37,13 @@ export default class WorkerOutput extends ProgressiveOutput {
   }
 
   doImperitiveStuff () {
-    const { config } = this.props;
+    const { config, width, height } = this.props;
     const { startX } = this.state;
     const endX = startX + StripWidth;
 
-    this.worker.postMessage({ config, startX, endX });
+    this.jobID++;
+
+    this.worker.postMessage({ config, startX, endX, width, height, jobID: this.jobID });
   }
 
   renderStrip(startX, endX, data) {
@@ -51,8 +60,8 @@ export default class WorkerOutput extends ProgressiveOutput {
 
           if (value > 0)
           {
-              // CHAOS!!!
-              //Debugger.Log(0, "", "CHAOS\n");
+            // CHAOS!!!
+            //Debugger.Log(0, "", "CHAOS\n");
             let colorIntensity = 255 - Math.floor(Math.exp(-value) * 255);
             pix = colorFromIntensity(colorIntensity, theme.chaos);
           }
